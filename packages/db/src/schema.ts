@@ -1,6 +1,6 @@
 import {
   index,
-  pgTable,
+  pgSchema,
   text,
   timestamp,
   uniqueIndex,
@@ -8,7 +8,13 @@ import {
   varchar
 } from "drizzle-orm/pg-core";
 
-export const oauthConnections = pgTable(
+/**
+ * Explicit public schema so generated SQL uses "public"."oauth_connections", etc.
+ * Helps when the pooler/session search_path is not what we expect.
+ */
+const app = pgSchema("public");
+
+export const oauthConnections = app.table(
   "oauth_connections",
   {
     id: uuid("id").defaultRandom().primaryKey(),
@@ -34,7 +40,7 @@ export const oauthConnections = pgTable(
   })
 );
 
-export const oauthConnectionTokens = pgTable(
+export const oauthConnectionTokens = app.table(
   "oauth_connection_tokens",
   {
     id: uuid("id").defaultRandom().primaryKey(),
@@ -49,7 +55,7 @@ export const oauthConnectionTokens = pgTable(
   })
 );
 
-export const oauthConnectionEvents = pgTable("oauth_connection_events", {
+export const oauthConnectionEvents = app.table("oauth_connection_events", {
   id: uuid("id").defaultRandom().primaryKey(),
   connectionId: uuid("connection_id").notNull(),
   type: varchar("type", { length: 64 }).notNull(),
@@ -57,7 +63,7 @@ export const oauthConnectionEvents = pgTable("oauth_connection_events", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull()
 });
 
-export const oauthStateNonces = pgTable(
+export const oauthStateNonces = app.table(
   "oauth_state_nonces",
   {
     id: uuid("id").defaultRandom().primaryKey(),

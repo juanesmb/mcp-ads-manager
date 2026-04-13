@@ -1,4 +1,5 @@
 import { and, eq } from "drizzle-orm";
+import { DrizzleQueryError } from "drizzle-orm/errors";
 import { db } from "./client";
 import {
   oauthConnections,
@@ -72,21 +73,48 @@ export async function insertOrUpdateLinkedinConnection(input: {
 export async function selectLinkedinConnectionByUserId(
   userId: string
 ): Promise<StoredLinkedinConnection | null> {
-  const row = await db
-    .select({
-      userId: oauthConnections.clerkUserId,
-      scope: oauthConnections.scope,
-      encryptedAccessToken: oauthConnectionTokens.encryptedAccessToken,
-      encryptedRefreshToken: oauthConnectionTokens.encryptedRefreshToken,
-      accessTokenExpiresAt: oauthConnections.accessTokenExpiresAt,
-      refreshTokenExpiresAt: oauthConnections.refreshTokenExpiresAt
-    })
-    .from(oauthConnections)
-    .innerJoin(oauthConnectionTokens, eq(oauthConnectionTokens.connectionId, oauthConnections.id))
-    .where(and(eq(oauthConnections.clerkUserId, userId), eq(oauthConnections.provider, "linkedin")))
-    .limit(1);
+  try {
+    const connRows = await db
+      .select({
+        id: oauthConnections.id,
+        userId: oauthConnections.clerkUserId,
+        scope: oauthConnections.scope,
+        accessTokenExpiresAt: oauthConnections.accessTokenExpiresAt,
+        refreshTokenExpiresAt: oauthConnections.refreshTokenExpiresAt
+      })
+      .from(oauthConnections)
+      .where(and(eq(oauthConnections.clerkUserId, userId), eq(oauthConnections.provider, "linkedin")))
+      .limit(1);
 
-  return row[0] ?? null;
+    const conn = connRows[0];
+    if (!conn) return null;
+
+    const tokenRows = await db
+      .select({
+        encryptedAccessToken: oauthConnectionTokens.encryptedAccessToken,
+        encryptedRefreshToken: oauthConnectionTokens.encryptedRefreshToken
+      })
+      .from(oauthConnectionTokens)
+      .where(eq(oauthConnectionTokens.connectionId, conn.id))
+      .limit(1);
+
+    const tok = tokenRows[0];
+    if (!tok) return null;
+
+    return {
+      userId: conn.userId,
+      scope: conn.scope,
+      encryptedAccessToken: tok.encryptedAccessToken,
+      encryptedRefreshToken: tok.encryptedRefreshToken,
+      accessTokenExpiresAt: conn.accessTokenExpiresAt,
+      refreshTokenExpiresAt: conn.refreshTokenExpiresAt
+    };
+  } catch (e) {
+    if (e instanceof DrizzleQueryError && e.cause instanceof Error) {
+      throw new Error(`${e.message}\nCause: ${e.cause.message}`, { cause: e.cause });
+    }
+    throw e;
+  }
 }
 
 export async function insertOauthStateNonce(input: {

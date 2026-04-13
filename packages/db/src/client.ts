@@ -7,6 +7,8 @@ const commonOptions = {
   connect_timeout: 10,
   /** Transaction pooler (PgBouncer) does not support prepared statements the same way. */
   prepare: false as const,
+  /** Fewer round-trips on connect; recommended for Supabase pooler. */
+  fetch_types: false as const,
   ssl: "require" as const
 };
 
