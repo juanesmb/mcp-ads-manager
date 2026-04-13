@@ -39,6 +39,8 @@ corepack pnpm install
 corepack pnpm dev
 ```
 
+Turbo needs a `pnpm` binary on `PATH` when it starts workspace tasks. This repo adds `pnpm` as a devDependency and runs Turbo via `scripts/run-turbo.mjs`, which prepends `node_modules/.bin` to `PATH`. If you still see “cannot find binary path”, run `corepack pnpm install` again from the repo root.
+
 - Web: `http://localhost:3000`
 - Gateway: `http://localhost:3001`
 
