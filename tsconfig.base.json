@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@jumon/domain/*": ["packages/domain/src/*"],
+      "@jumon/db/*": ["packages/db/src/*"],
+      "@jumon/auth/*": ["packages/auth/src/*"],
+      "@jumon/linkedin/*": ["packages/linkedin/src/*"],
+      "@jumon/ui/*": ["packages/ui/src/*"]
+    }
+  }
+}
