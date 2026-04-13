@@ -30,7 +30,21 @@ The initial OAuth schema migration was applied (`initial_oauth_schema`). Tables:
 Set in `apps/web/.env.local` and `apps/gateway/.env.local` (see root `.env.example`):
 
 - `SUPABASE_PROJECT_URL=https://stpkcubfjurvoxwtroyf.supabase.co`
-- `SUPABASE_DB_URL_POOLED=<transaction pooler URL from dashboard>`
+
+**Prefer discrete variables** (avoids `URIError: URI malformed` when the password contains `@`, `%`, `#`, etc.):
+
+- `SUPABASE_DB_HOST` — pooler host (e.g. `aws-1-us-east-1.pooler.supabase.com`)
+- `SUPABASE_DB_PORT` — usually `6543` for the transaction pooler
+- `SUPABASE_DB_USER` — e.g. `postgres.stpkcubfjurvoxwtroyf`
+- `SUPABASE_DB_PASSWORD` — plain password, no encoding needed
+- `SUPABASE_DB_NAME` — usually `postgres`
+
+**Or** a single URI:
+
+- `SUPABASE_DB_URL_POOLED` — if the password has special characters, it must be **percent-encoded** in the URL.
+
+For migrations/admin only:
+
 - `SUPABASE_DB_URL_DIRECT=<direct postgres URL from dashboard>`
 
 > Never commit real passwords or full connection strings to git.

@@ -56,6 +56,7 @@ All gateway internal endpoints require:
 
 ## Supabase Notes
 
-- Runtime traffic should use `SUPABASE_DB_URL_POOLED`.
+- Prefer **`SUPABASE_DB_HOST` / `SUPABASE_DB_USER` / `SUPABASE_DB_PASSWORD`** (see `.env.example`) so database passwords with `@`, `%`, or other special characters do not break the connection string parser.
+- Alternatively use `SUPABASE_DB_URL_POOLED` with a **URL-encoded** password.
 - Migrations/admin tooling should use `SUPABASE_DB_URL_DIRECT`.
 - Enable Supabase observability dashboards and alerts for pool pressure and slow token lookup queries.
