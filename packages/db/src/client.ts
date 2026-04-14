@@ -49,5 +49,19 @@ function createClient() {
   return postgres(url, { ...commonOptions });
 }
 
-export const sql = createClient();
-export const db = drizzle(sql);
+let sqlInstance: ReturnType<typeof postgres> | null = null;
+let dbInstance: ReturnType<typeof drizzle> | null = null;
+
+export function getSql() {
+  if (!sqlInstance) {
+    sqlInstance = createClient();
+  }
+  return sqlInstance;
+}
+
+export function getDb() {
+  if (!dbInstance) {
+    dbInstance = drizzle(getSql());
+  }
+  return dbInstance;
+}

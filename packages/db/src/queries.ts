@@ -1,6 +1,6 @@
 import { and, eq } from "drizzle-orm";
 import { DrizzleQueryError } from "drizzle-orm/errors";
-import { db } from "./client";
+import { getDb } from "./client";
 import {
   oauthConnections,
   oauthConnectionEvents,
@@ -25,6 +25,7 @@ export async function insertOrUpdateLinkedinConnection(input: {
   accessTokenExpiresAt: Date;
   refreshTokenExpiresAt: Date | null;
 }): Promise<void> {
+  const db = getDb();
   const [connection] = await db
     .insert(oauthConnections)
     .values({
@@ -73,6 +74,7 @@ export async function insertOrUpdateLinkedinConnection(input: {
 export async function selectLinkedinConnectionByUserId(
   userId: string
 ): Promise<StoredLinkedinConnection | null> {
+  const db = getDb();
   try {
     const connRows = await db
       .select({
@@ -122,6 +124,7 @@ export async function insertOauthStateNonce(input: {
   userId: string;
   provider: "linkedin";
 }): Promise<void> {
+  const db = getDb();
   await db.insert(oauthStateNonces).values({
     state: input.state,
     clerkUserId: input.userId,
@@ -133,6 +136,7 @@ export async function deleteOauthStateNonce(input: {
   state: string;
   provider: "linkedin";
 }): Promise<{ userId: string } | null> {
+  const db = getDb();
   const rows = await db
     .delete(oauthStateNonces)
     .where(and(eq(oauthStateNonces.state, input.state), eq(oauthStateNonces.provider, input.provider)))
