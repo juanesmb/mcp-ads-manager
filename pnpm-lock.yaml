@@ -24,40 +24,6 @@ importers:
         specifier: ^5.8.3
         version: 5.9.3
 
-  apps/gateway:
-    dependencies:
-      '@clerk/backend':
-        specifier: ^2.14.0
-        version: 2.33.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
-      '@jumon/auth':
-        specifier: workspace:*
-        version: link:../../packages/auth
-      '@jumon/domain':
-        specifier: workspace:*
-        version: link:../../packages/domain
-      '@jumon/linkedin':
-        specifier: workspace:*
-        version: link:../../packages/linkedin
-      next:
-        specifier: ^15.3.3
-        version: 15.5.15(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
-      react:
-        specifier: ^19.1.0
-        version: 19.2.5
-      react-dom:
-        specifier: ^19.1.0
-        version: 19.2.5(react@19.2.5)
-    devDependencies:
-      '@types/react':
-        specifier: ^19.1.6
-        version: 19.2.14
-      '@types/react-dom':
-        specifier: ^19.1.5
-        version: 19.2.3(@types/react@19.2.14)
-      typescript:
-        specifier: ^5.8.3
-        version: 5.9.3
-
   apps/web:
     dependencies:
       '@clerk/nextjs':

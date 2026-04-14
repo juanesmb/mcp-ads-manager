@@ -3,7 +3,6 @@
 Monorepo for the Jumon MVP:
 
 - `apps/web`: user-facing Next.js app (Clerk auth + LinkedIn connect UX)
-- `apps/gateway`: internal Next.js API gateway for MCP-server to provider calls
 - `packages/domain`: business use cases and ports
 - `packages/db`: Supabase Postgres schema and queries
 - `packages/auth`: shared auth guards for internal routes
@@ -15,8 +14,8 @@ Monorepo for the Jumon MVP:
 - Clerk is the shared auth/authorization server.
 - LinkedIn OAuth is initiated from `apps/web`.
 - Provider tokens are encrypted before persistence.
-- `apps/gateway` is the only component allowed to decrypt and use LinkedIn tokens.
-- The separate LinkedIn MCP server calls `apps/gateway` through internal authenticated endpoints.
+- `apps/web` backend routes are the only component allowed to decrypt and use LinkedIn tokens.
+- The separate LinkedIn MCP server calls `apps/web` internal authenticated endpoints.
 
 ## Infra (Supabase + Clerk)
 
@@ -26,7 +25,7 @@ Supabase was provisioned via the Supabase MCP; the OAuth schema is applied. See 
 
 ## Quick Start
 
-1. Copy `.env.example` to `apps/web/.env.local` and `apps/gateway/.env.local` (same values where needed) and fill all required values.
+1. Copy `.env.example` to `apps/web/.env.local` and fill all required values.
 2. Install dependencies:
 
 ```bash
@@ -42,7 +41,6 @@ corepack pnpm dev
 Turbo needs a `pnpm` binary on `PATH` when it starts workspace tasks. This repo adds `pnpm` as a devDependency and runs Turbo via `scripts/run-turbo.mjs`, which prepends `node_modules/.bin` to `PATH`. If you still see “cannot find binary path”, run `corepack pnpm install` again from the repo root.
 
 - Web: `http://localhost:3000`
-- Gateway: `http://localhost:3001`
 
 ## Gateway Endpoints (MVP)
 
@@ -53,6 +51,14 @@ Turbo needs a `pnpm` binary on `PATH` when it starts workspace tasks. This repo 
 All gateway internal endpoints require:
 
 - `x-gateway-secret: <GATEWAY_INTERNAL_SECRET>`
+
+## MCP Caller Target
+
+For the separate LinkedIn MCP server, target these internal endpoints on the same deployed app domain:
+
+- `https://<your-web-domain>/api/internal/connections/linkedin/current`
+- `https://<your-web-domain>/api/internal/linkedin/proxy/*`
+- `https://<your-web-domain>/api/internal/linkedin/refresh`
 
 ## Supabase Notes
 

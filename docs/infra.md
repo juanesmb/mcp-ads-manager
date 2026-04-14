@@ -27,7 +27,7 @@ The initial OAuth schema migration was applied (`initial_oauth_schema`). Tables:
    - **Pooled (recommended for the app):** use **Connection pooling** (Session mode or Transaction mode per your driver). For `postgres.js`, the pooled URI is usually on the **Connect** panel under **Transaction pooler** (port `6543`).
    - **Direct:** use the **URI** or host `db.stpkcubfjurvoxwtroyf.supabase.co` (port `5432`) for migrations and admin tools.
 
-Set in `apps/web/.env.local` and `apps/gateway/.env.local` (see root `.env.example`):
+Set in `apps/web/.env.local` (see root `.env.example`):
 
 - `SUPABASE_PROJECT_URL=https://stpkcubfjurvoxwtroyf.supabase.co`
 
@@ -80,3 +80,15 @@ Create a [LinkedIn Developer](https://www.linkedin.com/developers/) app, add the
 `http://localhost:3000/api/linkedin/callback`
 
 (production URL when deployed). Use the same value for `LINKEDIN_REDIRECT_URI` in `.env.local`.
+
+---
+
+## MCP server integration target
+
+The separate LinkedIn MCP server should call the single deployed web app at:
+
+- `https://<your-web-domain>/api/internal/connections/linkedin/current`
+- `https://<your-web-domain>/api/internal/linkedin/proxy/*`
+- `https://<your-web-domain>/api/internal/linkedin/refresh`
+
+Keep sending `x-gateway-secret: <GATEWAY_INTERNAL_SECRET>` on those requests.
