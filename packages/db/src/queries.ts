@@ -119,6 +119,13 @@ export async function selectLinkedinConnectionByUserId(
   }
 }
 
+export async function deleteLinkedinConnectionByUserId(userId: string): Promise<void> {
+  const db = getDb();
+  await db
+    .delete(oauthConnections)
+    .where(and(eq(oauthConnections.clerkUserId, userId), eq(oauthConnections.provider, "linkedin")));
+}
+
 export async function insertOauthStateNonce(input: {
   state: string;
   userId: string;
