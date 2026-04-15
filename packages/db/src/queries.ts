@@ -119,38 +119,6 @@ export async function selectLinkedinConnectionByUserId(
   }
 }
 
-export async function deleteLinkedinConnectionByUserId(userId: string): Promise<void> {
-  const db = getDb();
-  try {
-    await db.transaction(async (tx) => {
-      const rows = await tx
-        .select({ id: oauthConnections.id })
-        .from(oauthConnections)
-        .where(and(eq(oauthConnections.clerkUserId, userId), eq(oauthConnections.provider, "linkedin")))
-        .limit(1);
-
-      const connection = rows[0];
-      if (!connection) {
-        return;
-      }
-
-      await tx.insert(oauthConnectionEvents).values({
-        connectionId: connection.id,
-        type: "connection_disconnected",
-        payload: JSON.stringify({ provider: "linkedin" })
-      });
-
-      await tx.delete(oauthConnectionTokens).where(eq(oauthConnectionTokens.connectionId, connection.id));
-      await tx.delete(oauthConnections).where(eq(oauthConnections.id, connection.id));
-    });
-  } catch (e) {
-    if (e instanceof DrizzleQueryError && e.cause instanceof Error) {
-      throw new Error(`${e.message}\nCause: ${e.cause.message}`, { cause: e.cause });
-    }
-    throw e;
-  }
-}
-
 export async function insertOauthStateNonce(input: {
   state: string;
   userId: string;

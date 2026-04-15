@@ -51,3 +51,101 @@ test("linkedinApiRequest throws typed LinkedinApiError for invalid params", asyn
     globalThis.fetch = originalFetch;
   }
 });
+
+test("linkedinApiRequest preserves comma-separated fields projection", async () => {
+  const originalFetch = globalThis.fetch;
+  let calledURL = "";
+  globalThis.fetch = async (input) => {
+    calledURL = String(input);
+    return new Response(JSON.stringify({ elements: [] }), {
+      status: 200,
+      headers: { "content-type": "application/json" }
+    });
+  };
+
+  try {
+    await linkedinApiRequest({
+      accessToken: "token",
+      resourcePath: "adAnalytics",
+      query: {
+        q: "analytics",
+        fields: "impressions,clicks,costInLocalCurrency"
+      }
+    });
+
+    assert.match(
+      calledURL,
+      /fields=impressions,clicks,costInLocalCurrency/
+    );
+    assert.ok(!calledURL.includes("fields=impressions%2Cclicks"));
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("linkedinApiRequest decodes pre-encoded fields before serialization", async () => {
+  const originalFetch = globalThis.fetch;
+  let calledURL = "";
+  globalThis.fetch = async (input) => {
+    calledURL = String(input);
+    return new Response(JSON.stringify({ elements: [] }), {
+      status: 200,
+      headers: { "content-type": "application/json" }
+    });
+  };
+
+  try {
+    await linkedinApiRequest({
+      accessToken: "token",
+      resourcePath: "adAnalytics",
+      query: {
+        q: "analytics",
+        fields: "impressions%2Cclicks%2CcostInLocalCurrency"
+      }
+    });
+
+    assert.match(
+      calledURL,
+      /fields=impressions,clicks,costInLocalCurrency/
+    );
+    assert.ok(!calledURL.includes("%252C"));
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("linkedinApiRequest falls back to supported LinkedIn version when env is future month", async () => {
+  const originalFetch = globalThis.fetch;
+  const originalVersion = process.env.LINKEDIN_API_VERSION;
+  let capturedVersionHeader = "";
+  process.env.LINKEDIN_API_VERSION = "209912";
+
+  globalThis.fetch = async (_input, init) => {
+    const headers = init?.headers as Record<string, string>;
+    capturedVersionHeader = headers["LinkedIn-Version"];
+    return new Response(JSON.stringify({ elements: [] }), {
+      status: 200,
+      headers: { "content-type": "application/json" }
+    });
+  };
+
+  try {
+    await linkedinApiRequest({
+      accessToken: "token",
+      resourcePath: "adAnalytics",
+      query: {
+        q: "analytics",
+        fields: "impressions,clicks,costInLocalCurrency"
+      }
+    });
+
+    assert.equal(capturedVersionHeader, "202501");
+  } finally {
+    globalThis.fetch = originalFetch;
+    if (originalVersion === undefined) {
+      delete process.env.LINKEDIN_API_VERSION;
+    } else {
+      process.env.LINKEDIN_API_VERSION = originalVersion;
+    }
+  }
+});

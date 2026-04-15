@@ -1,5 +1,4 @@
 import {
-  deleteLinkedinConnectionByUserId,
   insertOrUpdateLinkedinConnection,
   selectLinkedinConnectionByUserId,
   type StoredLinkedinConnection
@@ -22,8 +21,4 @@ export async function getLinkedinConnectionByUserId(
   userId: string
 ): Promise<StoredLinkedinConnection | null> {
   return selectLinkedinConnectionByUserId(userId);
-}
-
-export async function disconnectLinkedinConnectionByUserId(userId: string): Promise<void> {
-  await deleteLinkedinConnectionByUserId(userId);
 }

@@ -155,13 +155,15 @@ export async function linkedinApiRequest(input: {
   resourcePath: string;
   query: Record<string, string>;
 }) {
-  const url = new URL(`https://api.linkedin.com/rest/${input.resourcePath}`);
-  Object.entries(input.query).forEach(([k, v]) => url.searchParams.set(k, v));
+  const queryString = serializeLinkedinQueryParams(input.query);
+  const url = new URL(
+    `https://api.linkedin.com/rest/${input.resourcePath}${queryString ? `?${queryString}` : ""}`
+  );
 
   const response = await fetch(url, {
     headers: {
       Authorization: `Bearer ${input.accessToken}`,
-      "LinkedIn-Version": process.env.LINKEDIN_API_VERSION ?? "202604",
+      "LinkedIn-Version": resolveLinkedinApiVersionHeader(process.env.LINKEDIN_API_VERSION),
       "X-Restli-Protocol-Version": "2.0.0"
     }
   });
@@ -172,6 +174,63 @@ export async function linkedinApiRequest(input: {
     throw normalizeLinkedinApiError(response.status, body);
   }
   return body;
+}
+
+const minimumLinkedinApiVersion = "202501";
+
+function resolveLinkedinApiVersionHeader(value: string | undefined): string {
+  if (!value) {
+    return minimumLinkedinApiVersion;
+  }
+
+  const normalized = value.trim();
+  if (!/^\d{6}$/.test(normalized)) {
+    return minimumLinkedinApiVersion;
+  }
+
+  if (normalized > currentYearMonth()) {
+    return minimumLinkedinApiVersion;
+  }
+
+  return normalized;
+}
+
+function currentYearMonth(): string {
+  const now = new Date();
+  const year = now.getUTCFullYear();
+  const month = String(now.getUTCMonth() + 1).padStart(2, "0");
+  return `${year}${month}`;
+}
+
+function serializeLinkedinQueryParams(query: Record<string, string>): string {
+  const parts: string[] = [];
+
+  for (const [key, value] of Object.entries(query)) {
+    const encodedKey = encodeURIComponent(key);
+    if (key === "fields") {
+      const normalizedValue = decodeLinkedinQueryValue(value);
+      const encodedFields = normalizedValue
+        .split(",")
+        .map((field) => field.trim())
+        .filter(Boolean)
+        .map((field) => encodeURIComponent(field))
+        .join(",");
+      parts.push(`${encodedKey}=${encodedFields}`);
+      continue;
+    }
+
+    parts.push(`${encodedKey}=${encodeURIComponent(value)}`);
+  }
+
+  return parts.join("&");
+}
+
+function decodeLinkedinQueryValue(value: string): string {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
 }
 
 function normalizeLinkedinApiError(status: number, body: unknown): LinkedinApiError {
