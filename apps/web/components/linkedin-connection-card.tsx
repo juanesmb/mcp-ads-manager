@@ -18,9 +18,23 @@ export function LinkedinConnectionCard({ status }: Props) {
           <h2 className="text-3xl font-semibold text-[var(--card-foreground)]">LinkedIn Ads</h2>
         </div>
         {connected ? (
-          <span className="rounded-full border border-[var(--success)] px-3 py-1 text-sm font-semibold text-[var(--success)]">
-            Connected
-          </span>
+          <div className="group">
+            <span className="rounded-full border border-[var(--success)] px-3 py-1 text-sm font-semibold text-[var(--success)] transition group-hover:hidden group-focus-within:hidden">
+              Connected
+            </span>
+            <form
+              action="/api/linkedin/disconnect"
+              method="post"
+              className="hidden group-hover:block group-focus-within:block"
+            >
+              <button
+                type="submit"
+                className="rounded-full border border-[#dc2626] px-3 py-1 text-sm font-semibold text-[#dc2626] transition hover:bg-[#dc2626] hover:text-white"
+              >
+                Disconnect
+              </button>
+            </form>
+          </div>
         ) : null}
       </div>
 
