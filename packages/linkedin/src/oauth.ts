@@ -204,11 +204,21 @@ function currentYearMonth(): string {
 
 function serializeLinkedinQueryParams(query: Record<string, string>): string {
   const parts: string[] = [];
+  const restliStructuredKeys = new Set([
+    "accounts",
+    "campaigns",
+    "campaignGroups",
+    "companies",
+    "shares",
+    "dateRange",
+    "sortBy",
+    "campaignType"
+  ]);
 
   for (const [key, value] of Object.entries(query)) {
     const encodedKey = encodeURIComponent(key);
+    const normalizedValue = decodeLinkedinQueryValue(value);
     if (key === "fields") {
-      const normalizedValue = decodeLinkedinQueryValue(value);
       const encodedFields = normalizedValue
         .split(",")
         .map((field) => field.trim())
@@ -219,7 +229,12 @@ function serializeLinkedinQueryParams(query: Record<string, string>): string {
       continue;
     }
 
-    parts.push(`${encodedKey}=${encodeURIComponent(value)}`);
+    if (restliStructuredKeys.has(key)) {
+      parts.push(`${encodedKey}=${encodePreservingRestLiSyntax(normalizedValue)}`);
+      continue;
+    }
+
+    parts.push(`${encodedKey}=${encodeURIComponent(normalizedValue)}`);
   }
 
   return parts.join("&");
@@ -231,6 +246,14 @@ function decodeLinkedinQueryValue(value: string): string {
   } catch {
     return value;
   }
+}
+
+function encodePreservingRestLiSyntax(value: string): string {
+  return encodeURIComponent(value)
+    .replace(/%28/gi, "(")
+    .replace(/%29/gi, ")")
+    .replace(/%3A/gi, ":")
+    .replace(/%2C/gi, ",");
 }
 
 function normalizeLinkedinApiError(status: number, body: unknown): LinkedinApiError {

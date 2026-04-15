@@ -149,3 +149,38 @@ test("linkedinApiRequest falls back to supported LinkedIn version when env is fu
     }
   }
 });
+
+test("linkedinApiRequest preserves RestLi syntax for structured params", async () => {
+  const originalFetch = globalThis.fetch;
+  let calledURL = "";
+  globalThis.fetch = async (input) => {
+    calledURL = String(input);
+    return new Response(JSON.stringify({ elements: [] }), {
+      status: 200,
+      headers: { "content-type": "application/json" }
+    });
+  };
+
+  try {
+    await linkedinApiRequest({
+      accessToken: "token",
+      resourcePath: "adAnalytics",
+      query: {
+        q: "analytics",
+        dateRange: "(start:(year:2025,month:1,day:1),end:(year:2026,month:4,day:15))",
+        accounts: "List(urn:li:sponsoredAccount:512247261)",
+        campaigns: "List(urn:li:sponsoredCampaign:474763193)",
+        fields: "impressions,clicks,costInLocalCurrency"
+      }
+    });
+
+    assert.match(
+      calledURL,
+      /dateRange=\(start:\(year:2025,month:1,day:1\),end:\(year:2026,month:4,day:15\)\)/
+    );
+    assert.match(calledURL, /accounts=List\(urn:li:sponsoredAccount:512247261\)/);
+    assert.match(calledURL, /campaigns=List\(urn:li:sponsoredCampaign:474763193\)/);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
