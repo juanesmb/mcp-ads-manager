@@ -113,6 +113,43 @@ export function decryptLinkedinTokens(input: {
   };
 }
 
+export type LinkedinApiInputError = {
+  code: string | null;
+  description: string;
+  fieldPath: string | null;
+};
+
+export type LinkedinApiErrorPayload = {
+  status: number;
+  code: string;
+  message: string;
+  inputErrors: LinkedinApiInputError[];
+  providerError: unknown;
+};
+
+const defaultLinkedinApiErrorCode = "LINKEDIN_API_ERROR";
+const paramInvalidCode = "LINKEDIN_PARAM_INVALID";
+
+export class LinkedinApiError extends Error {
+  readonly status: number;
+  readonly code: string;
+  readonly inputErrors: LinkedinApiInputError[];
+  readonly providerError: unknown;
+
+  constructor(payload: LinkedinApiErrorPayload) {
+    super(payload.message);
+    this.name = "LinkedinApiError";
+    this.status = payload.status;
+    this.code = payload.code;
+    this.inputErrors = payload.inputErrors;
+    this.providerError = payload.providerError;
+  }
+}
+
+export function isLinkedinApiError(error: unknown): error is LinkedinApiError {
+  return error instanceof LinkedinApiError;
+}
+
 export async function linkedinApiRequest(input: {
   accessToken: string;
   resourcePath: string;
@@ -131,6 +168,81 @@ export async function linkedinApiRequest(input: {
 
   const contentType = response.headers.get("content-type") ?? "";
   const body = contentType.includes("application/json") ? await response.json() : await response.text();
-  if (!response.ok) throw new Error(typeof body === "string" ? body : JSON.stringify(body));
+  if (!response.ok) {
+    throw normalizeLinkedinApiError(response.status, body);
+  }
   return body;
+}
+
+function normalizeLinkedinApiError(status: number, body: unknown): LinkedinApiError {
+  const stringBody = typeof body === "string" ? body : JSON.stringify(body);
+
+  if (!body || typeof body !== "object") {
+    return new LinkedinApiError({
+      status,
+      code: defaultLinkedinApiErrorCode,
+      message: stringBody || "LinkedIn API request failed",
+      inputErrors: [],
+      providerError: body
+    });
+  }
+
+  const bodyRecord = body as Record<string, unknown>;
+  const message = asString(bodyRecord.message) ?? stringBody ?? "LinkedIn API request failed";
+  const inputErrors = extractInputErrors(bodyRecord.errorDetails);
+
+  const code = inputErrors.length > 0 ? paramInvalidCode : defaultLinkedinApiErrorCode;
+
+  return new LinkedinApiError({
+    status,
+    code,
+    message,
+    inputErrors,
+    providerError: body
+  });
+}
+
+function extractInputErrors(errorDetails: unknown): LinkedinApiInputError[] {
+  if (!errorDetails || typeof errorDetails !== "object") {
+    return [];
+  }
+  const inputErrors = (errorDetails as Record<string, unknown>).inputErrors;
+  if (!Array.isArray(inputErrors)) {
+    return [];
+  }
+
+  return inputErrors
+    .map((entry) => toInputError(entry))
+    .filter((entry): entry is LinkedinApiInputError => entry !== null);
+}
+
+function toInputError(entry: unknown): LinkedinApiInputError | null {
+  if (!entry || typeof entry !== "object") {
+    return null;
+  }
+  const record = entry as Record<string, unknown>;
+
+  const inputPath = record.input;
+  let fieldPath: string | null = null;
+  if (inputPath && typeof inputPath === "object") {
+    const inputPathRecord = inputPath as Record<string, unknown>;
+    const nestedInputPath = inputPathRecord.inputPath;
+    if (nestedInputPath && typeof nestedInputPath === "object") {
+      fieldPath = asString((nestedInputPath as Record<string, unknown>).fieldPath) ?? null;
+    }
+  }
+
+  return {
+    code: asString(record.code) ?? null,
+    description: asString(record.description) ?? "Invalid input parameter",
+    fieldPath
+  };
+}
+
+function asString(value: unknown): string | undefined {
+  if (typeof value !== "string") {
+    return undefined;
+  }
+  const trimmed = value.trim();
+  return trimmed === "" ? undefined : trimmed;
 }

@@ -1,5 +1,10 @@
 import { getLinkedinConnectionByUserId } from "./connections";
-import { decryptLinkedinTokens, linkedinApiRequest } from "@jumon/linkedin/oauth";
+import {
+  decryptLinkedinTokens,
+  isLinkedinApiError,
+  linkedinApiRequest,
+  type LinkedinApiError
+} from "@jumon/linkedin/oauth";
 
 type Input = {
   userId: string;
@@ -7,22 +12,53 @@ type Input = {
   query: Record<string, string>;
 };
 
-export async function callLinkedinApiForUser(input: Input) {
-  const connection = await getLinkedinConnectionByUserId(input.userId);
+type LinkedinProxyDeps = {
+  getConnectionByUserId: typeof getLinkedinConnectionByUserId;
+  decryptTokens: typeof decryptLinkedinTokens;
+  apiRequest: typeof linkedinApiRequest;
+};
+
+const defaultDeps: LinkedinProxyDeps = {
+  getConnectionByUserId: getLinkedinConnectionByUserId,
+  decryptTokens: decryptLinkedinTokens,
+  apiRequest: linkedinApiRequest
+};
+
+export async function callLinkedinApiForUser(input: Input, deps: LinkedinProxyDeps = defaultDeps) {
+  const connection = await deps.getConnectionByUserId(input.userId);
   if (!connection) {
     return { status: 404, body: { error: "LinkedIn connection not found." } };
   }
 
-  const tokens = decryptLinkedinTokens({
+  const tokens = deps.decryptTokens({
     encryptedAccessToken: connection.encryptedAccessToken,
     encryptedRefreshToken: connection.encryptedRefreshToken
   });
 
-  const data = await linkedinApiRequest({
-    accessToken: tokens.accessToken,
-    resourcePath: input.resourcePath,
-    query: input.query
-  });
+  try {
+    const data = await deps.apiRequest({
+      accessToken: tokens.accessToken,
+      resourcePath: input.resourcePath,
+      query: input.query
+    });
 
-  return { status: 200, body: data };
+    return { status: 200, body: data };
+  } catch (error) {
+    if (isLinkedinApiError(error)) {
+      return mapLinkedinApiErrorToResponse(error);
+    }
+    throw error;
+  }
+}
+
+export function mapLinkedinApiErrorToResponse(error: LinkedinApiError) {
+  return {
+    status: error.status,
+    body: {
+      code: error.code,
+      message: error.message,
+      providerStatus: error.status,
+      inputErrors: error.inputErrors
+    }
+  };
 }

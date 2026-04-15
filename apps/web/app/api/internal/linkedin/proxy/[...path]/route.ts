@@ -7,22 +7,32 @@ type RouteContext = {
 };
 
 export async function POST(request: NextRequest, context: RouteContext) {
-  const authResult = await requireInternalGatewayAuth(request);
-  if (!authResult.ok) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const authResult = await requireInternalGatewayAuth(request);
+    if (!authResult.ok) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { path } = await context.params;
+    const body = (await request.json()) as { userId?: string; query?: Record<string, string> };
+    if (!body.userId) {
+      return NextResponse.json({ error: "Missing userId" }, { status: 400 });
+    }
+
+    const result = await callLinkedinApiForUser({
+      userId: body.userId,
+      resourcePath: path.join("/"),
+      query: body.query ?? {}
+    });
+
+    return NextResponse.json(result.body, { status: result.status });
+  } catch {
+    return NextResponse.json(
+      {
+        code: "GATEWAY_INTERNAL_ERROR",
+        message: "Unexpected internal gateway error while proxying LinkedIn request"
+      },
+      { status: 500 }
+    );
   }
-
-  const { path } = await context.params;
-  const body = (await request.json()) as { userId?: string; query?: Record<string, string> };
-  if (!body.userId) {
-    return NextResponse.json({ error: "Missing userId" }, { status: 400 });
-  }
-
-  const result = await callLinkedinApiForUser({
-    userId: body.userId,
-    resourcePath: path.join("/"),
-    query: body.query ?? {}
-  });
-
-  return NextResponse.json(result.body, { status: result.status });
 }
