@@ -213,3 +213,32 @@ test("linkedinApiRequest preserves encoded URNs for pre-encoded RestLi lists", a
     globalThis.fetch = originalFetch;
   }
 });
+
+test("linkedinApiRequest preserves RestLi syntax for search composite", async () => {
+  const originalFetch = globalThis.fetch;
+  let calledURL = "";
+  globalThis.fetch = async (input) => {
+    calledURL = String(input);
+    return new Response(JSON.stringify({ elements: [] }), {
+      status: 200,
+      headers: { "content-type": "application/json" }
+    });
+  };
+
+  try {
+    await linkedinApiRequest({
+      accessToken: "token",
+      resourcePath: "adAccounts",
+      query: {
+        q: "search",
+        search: "(status:(values:List(ACTIVE)))",
+        count: "1000"
+      }
+    });
+
+    assert.match(calledURL, /search=\(status:\(values:List\(ACTIVE\)\)\)/);
+    assert.ok(!calledURL.includes("search=%28status%3A"));
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});

@@ -218,6 +218,7 @@ function serializeLinkedinQueryParams(query: Record<string, string>): string {
     "shares"
   ]);
   const restliTupleKeys = new Set([
+    "search",
     "dateRange",
     "sortBy",
     "campaignType"
