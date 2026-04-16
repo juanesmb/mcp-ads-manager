@@ -156,14 +156,20 @@ export async function linkedinApiRequest(input: {
   query: Record<string, string>;
 }) {
   const queryString = serializeLinkedinQueryParams(input.query);
+  const linkedinVersion = resolveLinkedinApiVersionHeader(process.env.LINKEDIN_API_VERSION);
   const url = new URL(
     `https://api.linkedin.com/rest/${input.resourcePath}${queryString ? `?${queryString}` : ""}`
   );
 
+  maybeLogLinkedinRequest(url, {
+    "LinkedIn-Version": linkedinVersion,
+    "X-Restli-Protocol-Version": "2.0.0"
+  });
+
   const response = await fetch(url, {
     headers: {
       Authorization: `Bearer ${input.accessToken}`,
-      "LinkedIn-Version": resolveLinkedinApiVersionHeader(process.env.LINKEDIN_API_VERSION),
+      "LinkedIn-Version": linkedinVersion,
       "X-Restli-Protocol-Version": "2.0.0"
     }
   });
@@ -204,12 +210,14 @@ function currentYearMonth(): string {
 
 function serializeLinkedinQueryParams(query: Record<string, string>): string {
   const parts: string[] = [];
-  const restliStructuredKeys = new Set([
+  const restliListKeys = new Set([
     "accounts",
     "campaigns",
     "campaignGroups",
     "companies",
-    "shares",
+    "shares"
+  ]);
+  const restliTupleKeys = new Set([
     "dateRange",
     "sortBy",
     "campaignType"
@@ -229,7 +237,12 @@ function serializeLinkedinQueryParams(query: Record<string, string>): string {
       continue;
     }
 
-    if (restliStructuredKeys.has(key)) {
+    if (restliListKeys.has(key)) {
+      parts.push(`${encodedKey}=${encodeRestLiList(normalizedValue)}`);
+      continue;
+    }
+
+    if (restliTupleKeys.has(key)) {
       parts.push(`${encodedKey}=${encodePreservingRestLiSyntax(normalizedValue)}`);
       continue;
     }
@@ -254,6 +267,34 @@ function encodePreservingRestLiSyntax(value: string): string {
     .replace(/%29/gi, ")")
     .replace(/%3A/gi, ":")
     .replace(/%2C/gi, ",");
+}
+
+function encodeRestLiList(value: string): string {
+  const trimmed = value.trim();
+  if (!trimmed.startsWith("List(") || !trimmed.endsWith(")")) {
+    return encodePreservingRestLiSyntax(trimmed);
+  }
+
+  const inner = trimmed.slice(5, -1);
+  const encodedItems = inner
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .map((item) => encodeURIComponent(item))
+    .join(",");
+
+  return `List(${encodedItems})`;
+}
+
+function maybeLogLinkedinRequest(url: URL, headers: Record<string, string>): void {
+  if (process.env.LINKEDIN_DEBUG_REQUESTS !== "1") {
+    return;
+  }
+
+  console.info("[linkedinApiRequest] outbound request", {
+    url: String(url),
+    headers
+  });
 }
 
 function normalizeLinkedinApiError(status: number, body: unknown): LinkedinApiError {

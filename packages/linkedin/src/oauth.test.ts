@@ -178,8 +178,37 @@ test("linkedinApiRequest preserves RestLi syntax for structured params", async (
       calledURL,
       /dateRange=\(start:\(year:2025,month:1,day:1\),end:\(year:2026,month:4,day:15\)\)/
     );
-    assert.match(calledURL, /accounts=List\(urn:li:sponsoredAccount:512247261\)/);
-    assert.match(calledURL, /campaigns=List\(urn:li:sponsoredCampaign:474763193\)/);
+    assert.match(calledURL, /accounts=List\(urn%3Ali%3AsponsoredAccount%3A512247261\)/);
+    assert.match(calledURL, /campaigns=List\(urn%3Ali%3AsponsoredCampaign%3A474763193\)/);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("linkedinApiRequest preserves encoded URNs for pre-encoded RestLi lists", async () => {
+  const originalFetch = globalThis.fetch;
+  let calledURL = "";
+  globalThis.fetch = async (input) => {
+    calledURL = String(input);
+    return new Response(JSON.stringify({ elements: [] }), {
+      status: 200,
+      headers: { "content-type": "application/json" }
+    });
+  };
+
+  try {
+    await linkedinApiRequest({
+      accessToken: "token",
+      resourcePath: "adAnalytics",
+      query: {
+        q: "analytics",
+        accounts: "List(urn%3Ali%3AsponsoredAccount%3A512247261)",
+        fields: "impressions,clicks"
+      }
+    });
+
+    assert.match(calledURL, /accounts=List\(urn%3Ali%3AsponsoredAccount%3A512247261\)/);
+    assert.ok(!calledURL.includes("accounts=List(urn:li:sponsoredAccount:512247261)"));
   } finally {
     globalThis.fetch = originalFetch;
   }
