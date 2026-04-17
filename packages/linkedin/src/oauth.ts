@@ -176,6 +176,7 @@ export async function linkedinApiRequest(input: {
 
   const contentType = response.headers.get("content-type") ?? "";
   const body = contentType.includes("application/json") ? await response.json() : await response.text();
+  maybeLogLinkedinResponse(url, response.status, body);
   if (!response.ok) {
     throw normalizeLinkedinApiError(response.status, body);
   }
@@ -295,6 +296,33 @@ function maybeLogLinkedinRequest(url: URL, headers: Record<string, string>): voi
   console.info("[linkedinApiRequest] outbound request", {
     url: String(url),
     headers
+  });
+}
+
+// maybeLogLinkedinResponse mirrors maybeLogLinkedinRequest but logs the response.
+// Gated by LINKEDIN_DEBUG_REQUESTS=1. Used to investigate response-shape issues
+// such as missing per-element dateRange on analytics queries without having to
+// replay the outbound URL via curl.
+function maybeLogLinkedinResponse(url: URL, status: number, body: unknown): void {
+  if (process.env.LINKEDIN_DEBUG_REQUESTS !== "1") {
+    return;
+  }
+
+  let bodyPreview: unknown = body;
+  if (typeof body === "object" && body !== null) {
+    try {
+      const serialized = JSON.stringify(body);
+      // Cap preview size to avoid blowing up logs for large analytics responses.
+      bodyPreview = serialized.length > 4096 ? `${serialized.slice(0, 4096)}...<truncated>` : serialized;
+    } catch {
+      bodyPreview = "<unserializable body>";
+    }
+  }
+
+  console.info("[linkedinApiRequest] inbound response", {
+    url: String(url),
+    status,
+    body: bodyPreview
   });
 }
 
