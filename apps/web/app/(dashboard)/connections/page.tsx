@@ -1,6 +1,7 @@
 import { UserButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 import { notFound } from "next/navigation";
+import { GoogleConnectionCard } from "@/components/google-connection-card";
 import { LinkedinConnectionCard } from "@/components/linkedin-connection-card";
 import { getConnectionStatus } from "@/server/connection-status";
 
@@ -26,8 +27,9 @@ export default async function ConnectionsPage() {
         </p>
       </section>
 
-      <section className="mt-8">
-        <LinkedinConnectionCard status={status} />
+      <section className="mt-8 flex flex-col gap-6">
+        <LinkedinConnectionCard status={status.linkedin} />
+        <GoogleConnectionCard status={status.google} />
       </section>
     </main>
   );

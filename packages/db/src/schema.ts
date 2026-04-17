@@ -1,5 +1,7 @@
+import { sql } from "drizzle-orm";
 import {
   index,
+  jsonb,
   pgTable,
   text,
   timestamp,
@@ -16,8 +18,10 @@ export const oauthConnections = pgTable(
     provider: varchar("provider", { length: 64 }).notNull(),
     status: varchar("status", { length: 32 }).notNull().default("connected"),
     scope: text("scope").notNull(),
-    linkedinMemberId: varchar("linkedin_member_id", { length: 255 }),
-    linkedinAccountId: varchar("linkedin_account_id", { length: 255 }),
+    providerMetadata: jsonb("provider_metadata")
+      .$type<Record<string, unknown>>()
+      .notNull()
+      .default(sql`'{}'::jsonb`),
     accessTokenExpiresAt: timestamp("access_token_expires_at", { withTimezone: true }).notNull(),
     refreshTokenExpiresAt: timestamp("refresh_token_expires_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),

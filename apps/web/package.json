@@ -14,6 +14,7 @@
     "@jumon/auth": "workspace:*",
     "@jumon/domain": "workspace:*",
     "@jumon/linkedin": "workspace:*",
+    "@jumon/providers": "workspace:*",
     "@jumon/ui": "workspace:*",
     "clsx": "^2.1.1",
     "lucide-react": "^0.510.0",

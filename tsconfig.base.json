@@ -16,6 +16,8 @@
       "@jumon/db/*": ["packages/db/src/*"],
       "@jumon/auth/*": ["packages/auth/src/*"],
       "@jumon/linkedin/*": ["packages/linkedin/src/*"],
+      "@jumon/providers": ["packages/providers/src/index.ts"],
+      "@jumon/providers/*": ["packages/providers/src/*"],
       "@jumon/ui/*": ["packages/ui/src/*"]
     }
   }

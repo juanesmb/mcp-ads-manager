@@ -38,6 +38,9 @@ importers:
       '@jumon/linkedin':
         specifier: workspace:*
         version: link:../../packages/linkedin
+      '@jumon/providers':
+        specifier: workspace:*
+        version: link:../../packages/providers
       '@jumon/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -104,9 +107,21 @@ importers:
       '@jumon/linkedin':
         specifier: workspace:*
         version: link:../linkedin
+      '@jumon/providers':
+        specifier: workspace:*
+        version: link:../providers
 
   packages/linkedin:
     dependencies:
+      zod:
+        specifier: ^3.25.56
+        version: 3.25.76
+
+  packages/providers:
+    dependencies:
+      '@jumon/linkedin':
+        specifier: workspace:*
+        version: link:../linkedin
       zod:
         specifier: ^3.25.56
         version: 3.25.76
