@@ -43,9 +43,19 @@ export function GoogleConnectionCard({ status }: Props) {
           <p className="text-lg text-[var(--muted-foreground)]">
             Add the Google Ads MCP connector URL to your preferred agent (Claude, ChatGPT, etc.)
           </p>
-          <div className="flex items-center justify-between gap-3 rounded-xl border border-[var(--border)] px-3 py-2">
-            <p className="truncate text-sm text-[#4285f4]">{status.mcpServerUrl}</p>
-            <CopyButton value={status.mcpServerUrl} />
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[var(--border)] px-3 py-2">
+            <p className="min-w-0 flex-1 truncate text-sm text-[#4285f4]">{status.mcpServerUrl}</p>
+            <div className="flex shrink-0 items-center gap-2">
+              <CopyButton value={status.mcpServerUrl} />
+              <a
+                href="https://claude.ai/customize/connectors"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex rounded-lg border border-[var(--border)] px-3 py-1.5 text-sm font-semibold text-[var(--foreground)] transition hover:bg-[var(--border)]/50"
+              >
+                Add to Claude
+              </a>
+            </div>
           </div>
         </div>
       ) : (
