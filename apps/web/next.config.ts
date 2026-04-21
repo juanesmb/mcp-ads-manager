@@ -7,8 +7,7 @@ const nextConfig: NextConfig = {
     "@jumon/db",
     "@jumon/auth",
     "@jumon/linkedin",
-    "@jumon/providers",
-    "@jumon/ui"
+    "@jumon/providers"
   ]
 };
 

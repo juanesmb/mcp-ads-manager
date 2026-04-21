@@ -1,14 +1,5 @@
 import { getConnectionByUserIdAndProvider } from "@jumon/domain/connections";
-
-export type ProviderConnectionStatus = {
-  connected: boolean;
-  mcpServerUrl: string;
-};
-
-export type ConnectionStatus = {
-  linkedin: ProviderConnectionStatus;
-  google: ProviderConnectionStatus;
-};
+import type { ConnectionStatus } from "@/lib/connection-types";
 
 export async function getConnectionStatus(userId: string): Promise<ConnectionStatus> {
   const [linkedin, google] = await Promise.all([
