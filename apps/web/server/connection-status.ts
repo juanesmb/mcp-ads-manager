@@ -1,14 +1,20 @@
-import { getLinkedinConnectionByUserId } from "@jumon/domain/connections";
-
-export type ConnectionStatus = {
-  connected: boolean;
-  mcpServerUrl: string;
-};
+import { getConnectionByUserIdAndProvider } from "@jumon/domain/connections";
+import type { ConnectionStatus } from "@/lib/connection-types";
 
 export async function getConnectionStatus(userId: string): Promise<ConnectionStatus> {
-  const connection = await getLinkedinConnectionByUserId(userId);
+  const [linkedin, google] = await Promise.all([
+    getConnectionByUserIdAndProvider(userId, "linkedin"),
+    getConnectionByUserIdAndProvider(userId, "google")
+  ]);
+
   return {
-    connected: Boolean(connection),
-    mcpServerUrl: process.env.LINKEDIN_MCP_SERVER_URL ?? "https://mcp-server.us-central1.run.app/mcp"
+    linkedin: {
+      connected: Boolean(linkedin),
+      mcpServerUrl: process.env.LINKEDIN_MCP_SERVER_URL ?? "https://mcp-server.us-central1.run.app/mcp"
+    },
+    google: {
+      connected: Boolean(google),
+      mcpServerUrl: process.env.GOOGLE_ADS_MCP_SERVER_URL ?? "https://google-ads-mcp.example.com/mcp"
+    }
   };
 }

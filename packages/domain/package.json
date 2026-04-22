@@ -12,10 +12,13 @@
     "./connections": "./src/connections.ts",
     "./oauth-state": "./src/oauth-state.ts",
     "./linkedin-proxy": "./src/linkedin-proxy.ts",
-    "./linkedin-refresh": "./src/linkedin-refresh.ts"
+    "./linkedin-refresh": "./src/linkedin-refresh.ts",
+    "./provider-proxy": "./src/provider-proxy.ts",
+    "./provider-refresh": "./src/provider-refresh.ts"
   },
   "dependencies": {
     "@jumon/db": "workspace:*",
-    "@jumon/linkedin": "workspace:*"
+    "@jumon/linkedin": "workspace:*",
+    "@jumon/providers": "workspace:*"
   }
 }

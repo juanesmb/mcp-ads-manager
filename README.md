@@ -2,7 +2,7 @@
 
 Monorepo for the Jumon MVP:
 
-- `apps/web`: user-facing Next.js app (Clerk auth + LinkedIn connect UX)
+- `apps/web`: user-facing Next.js app (Clerk auth + **LinkedIn and Google** connect UX) built with **[shadcn/ui](https://ui.shadcn.com)**. Interface primitives (Radix UI + Tailwind) live as **vendored source** under `apps/web/components/ui/`, not as a traditional npm “UI kit” package. The shadcn config is in [`apps/web/components.json`](apps/web/components.json). To add or update components, from `apps/web` run: `pnpm dlx shadcn@latest add <component>`.
 - `packages/domain`: business use cases and ports
 - `packages/db`: Supabase Postgres schema and queries
 - `packages/auth`: shared auth guards for internal routes
@@ -12,7 +12,7 @@ Monorepo for the Jumon MVP:
 ## Architecture Summary
 
 - Clerk is the shared auth/authorization server.
-- LinkedIn OAuth is initiated from `apps/web`.
+- LinkedIn and Google OAuth are initiated from `apps/web`.
 - Provider tokens are encrypted before persistence.
 - `apps/web` backend routes are the only component allowed to decrypt and use LinkedIn tokens.
 - The separate LinkedIn MCP server calls `apps/web` internal authenticated endpoints.

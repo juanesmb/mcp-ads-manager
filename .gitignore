@@ -17,4 +17,8 @@ coverage
 # logs
 *.log
 
+# Supabase CLI local cache (should not be committed)
 supabase/.temp/
+
+# TypeScript incremental build info
+*.tsbuildinfo

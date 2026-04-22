@@ -1,4 +1,4 @@
-import { getLinkedinConnectionByUserId } from "./connections";
+import { getConnectionByUserIdAndProvider } from "./connections";
 import {
   decryptLinkedinTokens,
   isLinkedinApiError,
@@ -13,13 +13,13 @@ type Input = {
 };
 
 type LinkedinProxyDeps = {
-  getConnectionByUserId: typeof getLinkedinConnectionByUserId;
+  getConnectionByUserId: (userId: string) => ReturnType<typeof getConnectionByUserIdAndProvider>;
   decryptTokens: typeof decryptLinkedinTokens;
   apiRequest: typeof linkedinApiRequest;
 };
 
 const defaultDeps: LinkedinProxyDeps = {
-  getConnectionByUserId: getLinkedinConnectionByUserId,
+  getConnectionByUserId: (userId) => getConnectionByUserIdAndProvider(userId, "linkedin"),
   decryptTokens: decryptLinkedinTokens,
   apiRequest: linkedinApiRequest
 };
