@@ -16,3 +16,5 @@ coverage
 
 # logs
 *.log
+
+supabase/.temp/
