@@ -78,7 +78,8 @@ export const linkedinAdapter: ProviderAdapter = {
     const data = await linkedinApiRequest({
       accessToken,
       resourcePath: call.path.replace(/^\//, ""),
-      query: call.query ?? {}
+      query: call.query ?? {},
+      ...(call.headers ? { headers: call.headers } : {})
     });
     return { status: 200, body: data };
   }

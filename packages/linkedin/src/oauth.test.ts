@@ -214,6 +214,41 @@ test("linkedinApiRequest preserves encoded URNs for pre-encoded RestLi lists", a
   }
 });
 
+test("linkedinApiRequest merges optional headers and ignores auth or version overrides", async () => {
+  const originalFetch = globalThis.fetch;
+  let initHeaders: Record<string, string> | undefined;
+  globalThis.fetch = async (_input, init) => {
+    initHeaders = init?.headers as Record<string, string>;
+    return new Response(JSON.stringify({ elements: [] }), {
+      status: 200,
+      headers: { "content-type": "application/json" }
+    });
+  };
+
+  try {
+    await linkedinApiRequest({
+      accessToken: "real-token",
+      resourcePath: "adAccounts/1/creatives",
+      query: { q: "criteria" },
+      headers: {
+        "X-RestLi-Method": "FINDER",
+        Authorization: "Bearer attacker",
+        "LinkedIn-Version": "209901",
+        "X-Restli-Protocol-Version": "9.0.0"
+      }
+    });
+
+    assert.ok(initHeaders);
+    assert.equal(initHeaders["X-RestLi-Method"], "FINDER");
+    assert.match(initHeaders.Authorization ?? "", /^Bearer real-token$/);
+    assert.notEqual(initHeaders["LinkedIn-Version"], "209901");
+    assert.match(initHeaders["LinkedIn-Version"] ?? "", /^\d{6}$/);
+    assert.equal(initHeaders["X-Restli-Protocol-Version"], "2.0.0");
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
 test("linkedinApiRequest preserves RestLi syntax for search composite", async () => {
   const originalFetch = globalThis.fetch;
   let calledURL = "";

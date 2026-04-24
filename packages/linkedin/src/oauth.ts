@@ -150,10 +150,47 @@ export function isLinkedinApiError(error: unknown): error is LinkedinApiError {
   return error instanceof LinkedinApiError;
 }
 
+const linkedinOutboundHeaderDenylist = new Set([
+  "authorization",
+  "linkedin-version",
+  "x-restli-protocol-version"
+]);
+
+function buildLinkedinRestOutboundHeaders(
+  accessToken: string,
+  linkedinVersion: string,
+  extra?: Record<string, string>
+): Record<string, string> {
+  const out: Record<string, string> = {
+    Authorization: `Bearer ${accessToken}`,
+    "LinkedIn-Version": linkedinVersion,
+    "X-Restli-Protocol-Version": "2.0.0"
+  };
+  if (!extra) {
+    return out;
+  }
+  for (const [key, value] of Object.entries(extra)) {
+    if (!value) continue;
+    if (linkedinOutboundHeaderDenylist.has(key.toLowerCase())) continue;
+    out[key] = value;
+  }
+  return out;
+}
+
+function redactAuthorizationHeader(headers: Record<string, string>): Record<string, string> {
+  const copy = { ...headers };
+  if (copy.Authorization) {
+    copy.Authorization = "[redacted]";
+  }
+  return copy;
+}
+
+/** Optional `headers` support Rest.li methods such as FINDER; auth and version headers cannot be overridden. */
 export async function linkedinApiRequest(input: {
   accessToken: string;
   resourcePath: string;
   query: Record<string, string>;
+  headers?: Record<string, string>;
 }) {
   const queryString = serializeLinkedinQueryParams(input.query);
   const linkedinVersion = resolveLinkedinApiVersionHeader(process.env.LINKEDIN_API_VERSION);
@@ -161,17 +198,16 @@ export async function linkedinApiRequest(input: {
     `https://api.linkedin.com/rest/${input.resourcePath}${queryString ? `?${queryString}` : ""}`
   );
 
-  maybeLogLinkedinRequest(url, {
-    "LinkedIn-Version": linkedinVersion,
-    "X-Restli-Protocol-Version": "2.0.0"
-  });
+  const outboundHeaders = buildLinkedinRestOutboundHeaders(
+    input.accessToken,
+    linkedinVersion,
+    input.headers
+  );
+
+  maybeLogLinkedinRequest(url, redactAuthorizationHeader(outboundHeaders));
 
   const response = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${input.accessToken}`,
-      "LinkedIn-Version": linkedinVersion,
-      "X-Restli-Protocol-Version": "2.0.0"
-    }
+    headers: outboundHeaders
   });
 
   const contentType = response.headers.get("content-type") ?? "";
