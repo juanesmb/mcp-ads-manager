@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireInternalGatewayAuth } from "@jumon/auth/internal";
 import { callProviderApiForUser } from "@jumon/domain/provider-proxy";
+import {
+  buildSubscriptionRequiredError,
+  isUserBlockedFromMcpProviderAccess
+} from "@jumon/domain/mcp-subscription-gate";
 import type { ProviderApiCall } from "@jumon/providers";
 import { getProvider } from "@jumon/providers";
 
@@ -32,6 +36,15 @@ export async function POST(request: NextRequest, context: RouteContext) {
     const parsed = (await request.json()) as ProxyBody;
     if (!parsed.userId || !parsed.path || !parsed.method) {
       return NextResponse.json({ error: "Missing userId, path, or method" }, { status: 400 });
+    }
+    if (isUserBlockedFromMcpProviderAccess(parsed.userId)) {
+      return NextResponse.json(
+        buildSubscriptionRequiredError({
+          provider,
+          billingContactEmail: process.env.JUMON_BILLING_CONTACT_EMAIL
+        }),
+        { status: 403 }
+      );
     }
 
     const call: ProviderApiCall = {

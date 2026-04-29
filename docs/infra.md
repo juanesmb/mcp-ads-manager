@@ -92,3 +92,14 @@ The separate LinkedIn MCP server should call the single deployed web app at:
 - `https://<your-web-domain>/api/internal/linkedin/refresh`
 
 Keep sending `x-gateway-secret: <GATEWAY_INTERNAL_SECRET>` on those requests.
+
+### Manual MCP subscription gate (temporary)
+
+To manually disable MCP/provider access for specific users while still letting
+them access the web app, configure:
+
+- `MCP_BLOCKED_USER_IDS` — comma-separated Clerk user IDs blocked from
+  internal provider proxy/refresh routes
+- `JUMON_BILLING_CONTACT_EMAIL` — billing contact included in the structured
+  `SUBSCRIPTION_REQUIRED` response payload (defaults to
+  `juanesmoncada123@gmail.com` if unset)

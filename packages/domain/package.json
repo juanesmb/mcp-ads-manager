@@ -13,6 +13,7 @@
     "./oauth-state": "./src/oauth-state.ts",
     "./linkedin-proxy": "./src/linkedin-proxy.ts",
     "./linkedin-refresh": "./src/linkedin-refresh.ts",
+    "./mcp-subscription-gate": "./src/mcp-subscription-gate.ts",
     "./provider-proxy": "./src/provider-proxy.ts",
     "./provider-refresh": "./src/provider-refresh.ts"
   },
