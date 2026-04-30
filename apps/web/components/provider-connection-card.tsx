@@ -34,10 +34,9 @@ type ProviderConfig = {
   id: "linkedin" | "google";
   displayName: string;
   shortLabel: string;
-  urlClass: string;
   connectClass: string;
   iconClass: string;
-  connectedBlurb: string;
+  connectedDescription: string;
 };
 
 const PROVIDERS: Record<"linkedin" | "google", ProviderConfig> = {
@@ -45,21 +44,19 @@ const PROVIDERS: Record<"linkedin" | "google", ProviderConfig> = {
     id: "linkedin",
     displayName: "LinkedIn Ads",
     shortLabel: "in",
-    urlClass: "text-linkedin",
     connectClass:
       "h-auto border-2 border-linkedin bg-transparent px-5 py-2 font-semibold text-linkedin shadow-none hover:bg-linkedin hover:text-primary-foreground",
     iconClass: "bg-linkedin",
-    connectedBlurb: "Add the custom connector to your preferred agent (Claude, ChatGPT, etc...)"
+    connectedDescription: "Your LinkedIn Ads account is connected."
   },
   google: {
     id: "google",
     displayName: "Google Ads",
     shortLabel: "G",
-    urlClass: "text-google",
     connectClass:
       "h-auto border-2 border-google bg-transparent px-5 py-2 font-semibold text-google shadow-none hover:bg-google hover:text-primary-foreground",
     iconClass: "bg-google",
-    connectedBlurb: "Add the Google Ads MCP connector URL to your preferred agent (Claude, ChatGPT, etc.)"
+    connectedDescription: "Your Google Ads account is connected."
   }
 };
 
@@ -70,21 +67,21 @@ type Props = {
 
 function ProviderConnectionCard({ provider, status }: Props) {
   const config = PROVIDERS[provider];
-  const { connected, mcpServerUrl } = status;
+  const { connected } = status;
   const [confirmOpen, setConfirmOpen] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
   return (
     <>
-      <Card className="w-full min-w-0 max-w-xl flex-1">
-        <CardHeader className="border-b sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
+      <Card className="w-full min-w-0 max-w-md flex-1 gap-3 py-4">
+        <CardHeader className="border-b px-4 pb-3 [.border-b]:pb-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-2.5">
             <span
-              className={`inline-flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold text-primary-foreground ${config.iconClass}`}
+              className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold text-primary-foreground ${config.iconClass}`}
             >
               {config.shortLabel}
             </span>
-            <CardTitle className="text-3xl text-card-foreground">{config.displayName}</CardTitle>
+            <CardTitle className="text-lg font-semibold text-card-foreground">{config.displayName}</CardTitle>
           </div>
           {connected ? (
             <CardAction>
@@ -121,28 +118,11 @@ function ProviderConnectionCard({ provider, status }: Props) {
             </CardAction>
           ) : null}
         </CardHeader>
-        <CardContent className="pt-5">
+        <CardContent className="px-4 pt-3">
           {connected ? (
-            <div className="space-y-3">
-              <CardDescription className="text-base">{config.connectedBlurb}</CardDescription>
-              <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border/80 bg-muted/40 p-3">
-                <p className={`min-w-0 flex-1 truncate text-sm font-medium ${config.urlClass}`}>
-                  {mcpServerUrl}
-                </p>
-                <div className="flex shrink-0 items-center gap-2">
-                  <CopyMcpButton value={mcpServerUrl} />
-                  <Button variant="outline" size="sm" asChild>
-                    <a
-                      href="https://claude.ai/customize/connectors"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Add to Claude
-                    </a>
-                  </Button>
-                </div>
-              </div>
-            </div>
+            <CardDescription className="text-sm text-muted-foreground">
+              {config.connectedDescription}
+            </CardDescription>
           ) : (
             <Button variant="outline" asChild>
               <a
@@ -188,24 +168,6 @@ function ProviderConnectionCard({ provider, status }: Props) {
         </AlertDialogContent>
       </AlertDialog>
     </>
-  );
-}
-
-function CopyMcpButton({ value }: { value: string }) {
-  async function onCopy() {
-    const { toast } = await import("sonner");
-    try {
-      await navigator.clipboard.writeText(value);
-      toast.success("Copied to clipboard");
-    } catch {
-      toast.error("Could not copy");
-    }
-  }
-
-  return (
-    <Button type="button" variant="outline" size="sm" className="text-xs" onClick={onCopy}>
-      Copy
-    </Button>
   );
 }
 
