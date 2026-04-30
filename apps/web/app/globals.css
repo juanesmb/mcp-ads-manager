@@ -1,33 +1,35 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "./jumon-tokens.css";
 
 @custom-variant dark (&:is(.dark *));
 
-/* App + shadcn semantic tokens (light). Primary aligned with Jumon / LinkedIn accent. */
+/* App + shadcn semantic tokens mapped to Jumon design tokens (see jumon-tokens.css) */
 :root {
   --radius: 0.625rem;
-  --background: oklch(0.99 0.002 250);
-  --foreground: oklch(0.21 0.034 264);
-  --card: oklch(1 0 0);
-  --card-foreground: var(--foreground);
-  --popover: oklch(1 0 0);
-  --popover-foreground: var(--foreground);
-  /* Brand */
-  --primary: #0a66c2;
-  --primary-foreground: #ffffff;
-  --linkedin: #0a66c2;
-  --google: #4285f4;
-  --success: #16a34a;
-  --secondary: oklch(0.96 0.006 250);
-  --secondary-foreground: oklch(0.25 0.02 250);
-  --muted: oklch(0.96 0.006 250);
-  --muted-foreground: oklch(0.52 0.02 250);
-  --accent: oklch(0.96 0.01 250);
-  --accent-foreground: oklch(0.25 0.02 250);
+  --background: var(--j-mist);
+  --foreground: var(--j-deep-teal);
+  --card: #ffffff;
+  --card-foreground: var(--j-deep-teal);
+  --popover: #ffffff;
+  --popover-foreground: var(--j-deep-teal);
+  --primary: var(--j-ember);
+  --primary-foreground: var(--j-mist);
+  /* Legacy Tailwind aliases; both platforms use Ember CTA palette per design system */
+  --linkedin: var(--j-ember);
+  --google: var(--j-ember);
+  --success: var(--j-moss);
+  --secondary: var(--j-sage);
+  --secondary-foreground: var(--j-deep-teal);
+  --muted: var(--j-mist);
+  --muted-foreground: var(--j-slate);
+  --accent: var(--j-sage);
+  --accent-foreground: var(--j-deep-teal);
   --destructive: oklch(0.55 0.2 25);
-  --border: oklch(0.9 0.01 250);
-  --input: oklch(0.9 0.01 250);
-  --ring: oklch(0.55 0.12 250);
+  --destructive-foreground: #ffffff;
+  --border: var(--j-sage);
+  --input: var(--j-sage);
+  --ring: var(--j-harvest);
 }
 
 @theme inline {
@@ -60,11 +62,15 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border outline-ring/40;
   }
   body {
     @apply bg-background text-foreground antialiased;
-    font-family:
-      ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-family: var(--j-font-sans);
+    font-weight: 400;
+  }
+  h1,
+  h2 {
+    font-weight: 500;
   }
 }

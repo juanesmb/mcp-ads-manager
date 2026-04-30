@@ -7,8 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardAction,
-  CardContent,
-  CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle
 } from "@/components/ui/card";
@@ -34,8 +33,6 @@ type ProviderConfig = {
   id: "linkedin" | "google";
   displayName: string;
   shortLabel: string;
-  connectClass: string;
-  iconClass: string;
   connectedDescription: string;
 };
 
@@ -44,18 +41,12 @@ const PROVIDERS: Record<"linkedin" | "google", ProviderConfig> = {
     id: "linkedin",
     displayName: "LinkedIn Ads",
     shortLabel: "in",
-    connectClass:
-      "h-auto border-2 border-linkedin bg-transparent px-5 py-2 font-semibold text-linkedin shadow-none hover:bg-linkedin hover:text-primary-foreground",
-    iconClass: "bg-linkedin",
     connectedDescription: "Your LinkedIn Ads account is connected."
   },
   google: {
     id: "google",
     displayName: "Google Ads",
     shortLabel: "G",
-    connectClass:
-      "h-auto border-2 border-google bg-transparent px-5 py-2 font-semibold text-google shadow-none hover:bg-google hover:text-primary-foreground",
-    iconClass: "bg-google",
     connectedDescription: "Your Google Ads account is connected."
   }
 };
@@ -73,34 +64,32 @@ function ProviderConnectionCard({ provider, status }: Props) {
 
   return (
     <>
-      <Card className="w-full min-w-0 max-w-md flex-1 gap-3 py-4">
-        <CardHeader className="border-b px-4 pb-3 [.border-b]:pb-3 sm:flex-row sm:items-center sm:justify-between">
+      <Card className="w-full min-w-0 max-w-md flex-1 gap-0 overflow-hidden bg-card py-0">
+        <CardHeader className="flex-row flex-wrap items-center justify-between gap-3 border-b-[0.5px] border-border px-5 pb-3 pt-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2.5">
             <span
-              className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold text-primary-foreground ${config.iconClass}`}
+              className={cn(
+                "inline-flex size-8 shrink-0 items-center justify-center rounded-full font-mono text-xs font-normal",
+                connected
+                  ? "bg-[var(--j-dusk)] text-[var(--j-ember)]"
+                  : "bg-[var(--j-sage)] text-[var(--j-slate)]"
+              )}
             >
               {config.shortLabel}
             </span>
-            <CardTitle className="text-lg font-semibold text-card-foreground">{config.displayName}</CardTitle>
+            <CardTitle className="text-lg text-card-foreground">{config.displayName}</CardTitle>
           </div>
           {connected ? (
             <CardAction>
               <div className="flex items-center gap-2">
-                <Badge
-                  variant="outline"
-                  className="border-success/50 bg-background font-semibold text-success"
-                >
+                <Badge className="h-6 gap-1.5 rounded-[20px] border-0 bg-[var(--j-sage)] px-2.5 text-[11px] font-medium text-[var(--j-moss)]">
+                  <span className="size-1.5 shrink-0 rounded-full bg-[var(--j-moss)]" aria-hidden />
                   Connected
                 </Badge>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="icon-sm"
-                      className="shrink-0"
-                      aria-label="Connection options"
-                    >
-                      <MoreVertical className="size-4" />
+                    <Button variant="outline" size="icon-sm" className="shrink-0" aria-label="Connection options">
+                      <MoreVertical className="size-4 text-foreground" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-40">
@@ -118,39 +107,31 @@ function ProviderConnectionCard({ provider, status }: Props) {
             </CardAction>
           ) : null}
         </CardHeader>
-        <CardContent className="px-4 pt-3">
+        <CardFooter
+          className={cn(
+            "flex-col items-stretch px-5 py-3.5",
+            connected &&
+              "border-t-[0.5px] border-border bg-[var(--j-mist)] text-muted-foreground [.border-t]:pt-3.5"
+          )}
+        >
           {connected ? (
-            <CardDescription className="text-sm text-muted-foreground">
-              {config.connectedDescription}
-            </CardDescription>
+            <p className="text-sm text-muted-foreground">{config.connectedDescription}</p>
           ) : (
-            <Button variant="outline" asChild>
-              <a
-                className={cn("rounded-xl", config.connectClass)}
-                href={`/api/oauth/${config.id}/connect`}
-              >
-                Connect
-              </a>
+            <Button asChild className="h-auto w-fit rounded-[var(--j-radius-md)] px-3.5 py-[7px] text-[13px] font-medium">
+              <a href={`/api/oauth/${config.id}/connect`}>Connect</a>
             </Button>
           )}
-        </CardContent>
+        </CardFooter>
       </Card>
 
-      <form
-        ref={formRef}
-        method="post"
-        action={`/api/oauth/${config.id}/disconnect`}
-        className="hidden"
-        aria-hidden
-      />
+      <form ref={formRef} method="post" action={`/api/oauth/${config.id}/disconnect`} className="hidden" aria-hidden />
 
       <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Disconnect {config.displayName}?</AlertDialogTitle>
             <AlertDialogDescription>
-              You can reconnect at any time. Agents using this account will lose access until you connect
-              again.
+              You can reconnect at any time. Agents using this account will lose access until you connect again.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

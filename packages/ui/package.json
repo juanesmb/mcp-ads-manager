@@ -10,7 +10,8 @@
   },
   "exports": {
     "./cn": "./src/cn.ts",
-    "./button": "./src/button.tsx"
+    "./button": "./src/button.tsx",
+    "./tokens": "./src/tokens.ts"
   },
   "dependencies": {
     "clsx": "^2.1.1",
