@@ -8,19 +8,22 @@ import { MarketingFooter } from "@/components/sections/marketing-footer";
 import { PricingSection } from "@/components/sections/pricing-section";
 import { TestimonialSection } from "@/components/sections/testimonial-section";
 import { FeaturesSection } from "@/components/sections/value-section";
+import { PageGlowCanvas } from "@/components/ui/page-glow-canvas";
 
 export default function HomePage() {
   return (
     <>
-      <HeroSection />
-      <LogoBar />
-      <HowItWorksSection />
-      <DataflowSection />
-      <FeaturesSection />
-      <TestimonialSection />
-      <PricingSection />
-      <FaqSection />
-      <CtaSection />
+      <PageGlowCanvas>
+        <HeroSection />
+        <LogoBar />
+        <HowItWorksSection />
+        <DataflowSection />
+        <FeaturesSection />
+        <TestimonialSection />
+        <PricingSection />
+        <FaqSection />
+        <CtaSection />
+      </PageGlowCanvas>
       <MarketingFooter />
     </>
   );

@@ -7,7 +7,7 @@ export const hero = {
   title: "Your ad data,",
   titleEm: "inside every agent",
   subtitle:
-    "Connect LinkedIn Ads and Google Ads once. Every AI tool your team uses gets instant, governed access — no extra integrations required.",
+    "One integration. Every AI agent on your team can query your campaigns, pull reports, and act on live data",
   primaryCta: "Start your free trial →",
   secondaryCta: "See how it works",
   secondaryHref: "#how-it-works",

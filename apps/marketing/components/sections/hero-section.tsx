@@ -8,18 +8,8 @@ export function HeroSection() {
   const appHref = getAppHref();
 
   return (
-    <section className="relative overflow-hidden bg-[var(--j-deep-teal)]">
-      {/* Subtle radial ember glow — decorative depth, marketing-only exception to no-gradient rule */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute left-1/2 top-[-120px] h-[700px] w-[700px] -translate-x-1/2 rounded-full"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(200,96,26,0.12) 0%, transparent 70%)",
-        }}
-      />
-
-      <MarketingContainer className="relative pb-20 pt-24 text-center">
+    <section className="bg-[var(--j-deep-teal)]">
+      <MarketingContainer className="pb-20 pt-24 text-center">
         {/* Early access badge */}
         <div className="mb-8 inline-flex items-center gap-2 rounded-[20px] border-[0.5px] border-[var(--j-fern)] bg-[var(--j-canopy)] px-3.5 py-[5px] text-[12px] font-medium tracking-[0.04em] text-[var(--j-fern)]">
           <span

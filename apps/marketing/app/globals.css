@@ -3,18 +3,18 @@
 
 :root {
   --radius: 0.625rem;
-  --background: var(--j-mist);
-  --foreground: var(--j-deep-teal);
-  --card: #ffffff;
-  --card-foreground: var(--j-deep-teal);
+  --background: var(--j-deep-teal);
+  --foreground: var(--j-mist);
+  --card: var(--j-canopy);
+  --card-foreground: var(--j-mist);
   --primary: var(--j-ember);
   --primary-foreground: var(--j-mist);
-  --muted: var(--j-mist);
+  --muted: var(--j-canopy);
   --muted-foreground: var(--j-slate);
-  --accent: var(--j-sage);
-  --accent-foreground: var(--j-deep-teal);
-  --border: var(--j-sage);
-  --input: var(--j-sage);
+  --accent: var(--j-canopy);
+  --accent-foreground: var(--j-mist);
+  --border: #1a3038;
+  --input: #1a3038;
   --ring: var(--j-harvest);
 }
 

@@ -23,7 +23,7 @@ const siteUrl = getSiteUrl();
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Jumon — MCP connectivity for LinkedIn Ads and Google Ads",
+    default: "Jumon — Ad platform access for AI agents",
     template: "%s · Jumon"
   },
   description:
