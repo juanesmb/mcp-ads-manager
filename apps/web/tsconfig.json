@@ -5,7 +5,8 @@
     "paths": {
       "@/*": [
         "./*"
-      ]
+      ],
+      "@jumon/ui/*": ["../../packages/ui/src/*"]
     },
     "plugins": [
       {
