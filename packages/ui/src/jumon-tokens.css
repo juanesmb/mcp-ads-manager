@@ -1,0 +1,40 @@
+/* Jumon Design Tokens */
+
+:root {
+  /* Brand */
+  --j-deep-teal: #10282d;
+  --j-ember: #c8601a;
+  --j-harvest: #f0a349;
+
+  /* Green - status & depth only */
+  --j-canopy: #1e3d44;
+  --j-moss: #2a7a5c;
+  --j-fern: #4ab89a;
+
+  /* Surfaces & neutrals */
+  --j-mist: #f4f8f7;
+  --j-sage: #d6e8e3;
+  --j-slate: #7a9e97;
+  --j-dusk: #fdebd8;
+
+  /* Typography */
+  --j-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --j-font-mono: "SF Mono", "Fira Code", "Fira Mono", monospace;
+
+  /* Spacing scale */
+  --j-space-xs: 4px;
+  --j-space-sm: 8px;
+  --j-space-md: 14px;
+  --j-space-lg: 20px;
+  --j-space-xl: 28px;
+  --j-space-2xl: 40px;
+
+  /* Border radius */
+  --j-radius-sm: 6px;
+  --j-radius-md: 8px;
+  --j-radius-lg: 12px;
+  --j-radius-xl: 50%;
+
+  /* Border */
+  --j-border: 0.5px solid var(--j-sage);
+}

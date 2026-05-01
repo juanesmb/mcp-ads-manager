@@ -1,0 +1,52 @@
+@import "../../../packages/ui/src/jumon-tokens.css";
+@import "tailwindcss";
+
+:root {
+  --radius: 0.625rem;
+  --background: var(--j-mist);
+  --foreground: var(--j-deep-teal);
+  --card: #ffffff;
+  --card-foreground: var(--j-deep-teal);
+  --primary: var(--j-ember);
+  --primary-foreground: var(--j-mist);
+  --muted: var(--j-mist);
+  --muted-foreground: var(--j-slate);
+  --accent: var(--j-sage);
+  --accent-foreground: var(--j-deep-teal);
+  --border: var(--j-sage);
+  --input: var(--j-sage);
+  --ring: var(--j-harvest);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Override the token defaults with next/font variables when available */
+  --j-font-sans: var(--font-dm-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --j-font-serif: var(--font-instrument-serif), Georgia, serif;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--j-font-sans);
+    font-weight: 400;
+  }
+  h1,
+  h2,
+  h3 {
+    font-weight: 500;
+  }
+}
