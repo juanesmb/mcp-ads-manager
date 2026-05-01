@@ -43,7 +43,6 @@ export function ConnectionsView({ status }: Props) {
           appearance={{
             variables: {
               colorPrimary: "#c8601a",
-              colorNeutral: "#ffffff"
             },
             elements: {
               userButtonAvatarBox:
