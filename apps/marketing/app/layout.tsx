@@ -35,7 +35,11 @@ export const metadata: Metadata = {
     url: "/",
     siteName: "Jumon",
     type: "website"
-  }
+  },
+  icons: {
+    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+    apple: [{ url: "/apple-icon.png", sizes: "512x512" }],
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

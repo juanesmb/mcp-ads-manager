@@ -2,6 +2,7 @@
 
 import { useCallback } from "react";
 import { UserButton } from "@clerk/nextjs";
+import { JumonMark } from "@jumon/ui/jumon-mark";
 import { GoogleConnectionCard, LinkedinConnectionCard } from "@/components/provider-connection-card";
 import { Button } from "@/components/ui/button";
 import {
@@ -36,8 +37,9 @@ export function ConnectionsView({ status }: Props) {
         className="flex h-[52px] shrink-0 items-center justify-between px-8"
         style={{ backgroundColor: "var(--j-deep-teal)" }}
       >
-        <div className="rounded-[var(--j-radius-sm)] border border-[var(--j-ember)] px-3.5 py-1.5 text-sm font-medium tracking-[0.12em] text-[var(--j-mist)]">
-          JUMON
+        <div className="flex items-center gap-2.5 rounded-[var(--j-radius-sm)] border border-[var(--j-ember)] px-3 py-1.5">
+          <JumonMark width={36} height={20} />
+          <span className="text-[13px] font-medium tracking-[0.14em] text-[var(--j-mist)]">JUMON</span>
         </div>
         <UserButton
           appearance={{

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { JumonMark } from "@/components/ui/jumon-mark";
 import { getAppHref } from "@/lib/env";
 
 export function MarketingHeader() {
@@ -13,10 +14,15 @@ export function MarketingHeader() {
         >
           <Link
             href="/"
-            className="rounded-[var(--j-radius-sm)] border border-[var(--j-ember)] px-3.5 py-1.5 text-sm font-medium tracking-[0.12em] text-[var(--j-mist)] uppercase"
+            className="flex items-center gap-2.5 rounded-[var(--j-radius-sm)] border border-[var(--j-ember)] px-3 py-1.5"
+            aria-label="Jumon home"
           >
-            JUMON
+            <JumonMark width={36} height={20} />
+            <span className="text-[13px] font-medium tracking-[0.14em] text-[var(--j-mist)]">
+              JUMON
+            </span>
           </Link>
+
           <div className="flex items-center gap-8">
             <div className="hidden items-center gap-8 md:flex">
               <a

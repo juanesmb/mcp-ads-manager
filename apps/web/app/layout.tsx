@@ -5,7 +5,11 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Jumon",
-  description: "MCP Ads Manager"
+  description: "MCP Ads Manager",
+  icons: {
+    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+    apple: [{ url: "/apple-icon.png", sizes: "512x512" }],
+  },
 };
 
 export default function RootLayout({

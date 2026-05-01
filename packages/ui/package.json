@@ -11,7 +11,8 @@
   "exports": {
     "./cn": "./src/cn.ts",
     "./button": "./src/button.tsx",
-    "./tokens": "./src/tokens.ts"
+    "./tokens": "./src/tokens.ts",
+    "./jumon-mark": "./src/jumon-mark.tsx"
   },
   "dependencies": {
     "clsx": "^2.1.1",

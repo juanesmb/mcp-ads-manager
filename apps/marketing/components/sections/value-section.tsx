@@ -33,9 +33,9 @@ export function FeaturesSection() {
           {features.cards.map((card) => (
             <div
               key={card.title}
-              className="rounded-[var(--j-radius-lg)] border-[0.5px] border-[var(--j-canopy)] bg-[var(--j-canopy)] p-7"
+              className="rounded-[var(--j-radius-lg)] border-[0.5px] border-[#1a3038] bg-[var(--j-canopy)] p-7"
             >
-              <div className="mb-4 flex size-10 items-center justify-center rounded-[10px] bg-[var(--j-dusk)] text-[18px]">
+              <div className="mb-4 flex size-10 items-center justify-center rounded-[10px] text-[18px]" style={{ background: "rgba(244,248,247,0.08)" }}>
                 {card.icon}
               </div>
               <h3 className="mb-2 text-[15px] font-medium text-[var(--j-mist)]">

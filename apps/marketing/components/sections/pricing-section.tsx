@@ -7,13 +7,13 @@ export function PricingSection() {
   const appHref = getAppHref();
 
   return (
-    <section id="pricing" className="bg-background py-[88px]">
+    <section id="pricing" className="bg-[var(--j-deep-teal)] py-[88px]">
       <MarketingContainer>
         <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.12em] text-[var(--j-ember)]">
           {pricing.label}
         </p>
         <h2
-          className="mb-4 text-foreground"
+          className="mb-4 text-[var(--j-mist)]"
           style={{
             fontFamily: "var(--j-font-serif)",
             fontSize: "clamp(30px, 4vw, 46px)",
@@ -31,14 +31,17 @@ export function PricingSection() {
           {pricing.sub}
         </p>
 
-        <div className="max-w-[460px] overflow-hidden rounded-[var(--j-radius-lg)] border-[0.5px] border-border bg-card">
+        <div className="max-w-[460px] overflow-hidden rounded-[var(--j-radius-lg)] border-[0.5px] border-[#1a3038] bg-[var(--j-canopy)]">
           <div className="px-7 pb-6 pt-7">
-            <p className="mb-4 text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--j-ember)]">
+            {/* Fern early-access label */}
+            <p className="mb-4 text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--j-fern)]">
               {pricing.planLabel}
             </p>
+
+            {/* Instrument Serif price in mist */}
             <div className="mb-1.5 flex items-baseline gap-1">
               <span
-                className="text-foreground leading-none"
+                className="leading-none text-[var(--j-mist)]"
                 style={{
                   fontFamily: "var(--j-font-serif)",
                   fontSize: "52px",
@@ -53,21 +56,28 @@ export function PricingSection() {
             </div>
             <p className="mb-6 text-[13px] text-[var(--j-slate)]">{pricing.tagline}</p>
 
-            {/* Dusk trial callout */}
-            <div className="mb-6 flex items-center gap-3 rounded-[var(--j-radius-md)] bg-[var(--j-dusk)] px-4 py-3">
+            {/* Ember-tinted trial callout */}
+            <div
+              className="mb-6 flex items-center gap-3 rounded-[var(--j-radius-md)] px-4 py-3"
+              style={{
+                background: "rgba(200,96,26,0.15)",
+                border: "0.5px solid rgba(200,96,26,0.30)",
+              }}
+            >
               <span className="text-[18px]">🎁</span>
               <div>
-                <p className="text-[13px] font-medium text-foreground">
+                <p className="text-[13px] font-medium text-[var(--j-mist)]">
                   {pricing.trialCallout.title}
                 </p>
                 <p className="text-[12px] text-[var(--j-slate)]">{pricing.trialCallout.sub}</p>
               </div>
             </div>
 
+            {/* Fern ✓ bullet list, mist text */}
             <ul className="flex flex-col gap-2.5">
               {pricing.bullets.map((b) => (
-                <li key={b} className="flex items-center gap-2.5 text-[13px] text-foreground">
-                  <span className="font-medium text-[var(--j-moss)]" aria-hidden>
+                <li key={b} className="flex items-center gap-2.5 text-[13px] text-[var(--j-mist)]">
+                  <span className="font-medium text-[var(--j-fern)]" aria-hidden>
                     ✓
                   </span>
                   {b}
@@ -76,7 +86,11 @@ export function PricingSection() {
             </ul>
           </div>
 
-          <div className="flex flex-col gap-2.5 border-t-[0.5px] border-border bg-[var(--j-mist)] px-7 py-5">
+          {/* Dark overlay footer */}
+          <div
+            className="flex flex-col gap-2.5 border-t-[0.5px] border-[#1a3038] px-7 py-5"
+            style={{ background: "rgba(0,0,0,0.15)" }}
+          >
             <PrimaryCta href={appHref} large className="w-full justify-center">
               Start your free trial →
             </PrimaryCta>

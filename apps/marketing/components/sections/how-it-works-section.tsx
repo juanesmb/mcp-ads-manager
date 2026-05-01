@@ -49,9 +49,6 @@ export function HowItWorksSection() {
                   {step.body}
                 </p>
               </div>
-              <div className="mt-auto border-t-[0.5px] border-border bg-[var(--j-mist)] px-6 py-3 font-mono text-[12px] text-[var(--j-fern)] overflow-hidden text-ellipsis whitespace-nowrap">
-                {step.footer}
-              </div>
               </FadeUp>
             </li>
           ))}
