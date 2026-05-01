@@ -197,6 +197,27 @@ export const faq: { question: string; answer: string }[] = [
   },
 ];
 
+export const dataflow = {
+  label: "How data moves",
+  heading: "One connection,",
+  headingEm: "everywhere you work",
+  layers: {
+    sources: [
+      { id: "linkedin", label: "LinkedIn Ads", icon: "in", active: true },
+      { id: "google",   label: "Google Ads",   icon: "G",  active: true },
+      { id: "reddit",   label: "Reddit Ads",   icon: "R",  active: false, badge: "soon" },
+      { id: "meta",     label: "Meta Ads",     icon: "M",  active: false, badge: "soon" },
+    ],
+    hub: { id: "jumon", label: "Jumon Intelligence" },
+    agents: [
+      { id: "claude",   label: "Claude",        icon: "C" },
+      { id: "chatgpt",  label: "ChatGPT",       icon: "⚡" },
+      { id: "anyagent", label: "Any MCP agent", icon: "∞" },
+    ],
+    user: { id: "user", label: "You" },
+  },
+} as const;
+
 export const footer = {
   earlyAccessBadge: "● Early access open",
   privacyLabel: "Privacy",

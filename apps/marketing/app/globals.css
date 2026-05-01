@@ -38,6 +38,12 @@
   --j-font-serif: var(--font-instrument-serif), Georgia, serif;
 }
 
+/* Dataflow section — animated dash line traveling along SVG paths */
+@keyframes flow-dash {
+  from { stroke-dashoffset: 200; }
+  to   { stroke-dashoffset: 0; }
+}
+
 @layer base {
   body {
     @apply bg-background text-foreground antialiased;
